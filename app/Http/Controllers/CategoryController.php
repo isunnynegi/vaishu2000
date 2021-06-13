@@ -2,20 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Category;
 use Auth;
+use DB;
+use App\Models\Category;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class CategoryController extends Controller{
     
     public function index(Request $request) {
 
-		if ($request->ajax()) {
-			echo json_encode($this->itemTableData($request));
-			exit;
-		}
+		$category = Category::select(['id', 'name', 'type', 'status'])->get();
 
-		return view('category.index');
+		return view('category.index', compact('category'));
     }
 
     public function create() {
@@ -24,7 +23,8 @@ class CategoryController extends Controller{
 		return view('category.create', compact('category'));
 	}
 
-	public function store(Request $request) {
+	public function store(Request $request) {				
+		$postArr = $request->input();
 
 		$this->validate($request, [
 			'name' => ['required', Rule::unique('category')->where(function ($query) {
@@ -37,14 +37,10 @@ class CategoryController extends Controller{
 		]);
 
 		DB::beginTransaction();
-		try {
-			$postArr = $request->input();
-
-			$postArr = Arr::except($postArr, array('_token'));
-
+		// try {
 			$postArr['created_by'] = Auth::user()->id;
+			
 			$itemsku = Category::create($postArr);
-
 			if ($itemsku->exists) {
 				DB::commit();
 				return redirect()->route('category.index')
@@ -52,16 +48,16 @@ class CategoryController extends Controller{
 			} else {
 				$message = 'Category can\'t added';
 			}
-		} catch (Illuminate\Database\QueryException $e) {
-			DB::rollback();
-			$message = $e->getMessage();
-		} catch (\Exception $e) {
-			DB::rollback();
-			$message = $e->getMessage();
-		} catch (\Throwable $th) {
-			DB::rollback();
-			$message = $th->getMessage();
-		}
+		// } catch (Illuminate\Database\QueryException $e) {
+		// 	DB::rollback();
+		// 	$message = $e->getMessage();
+		// } catch (\Exception $e) {
+		// 	DB::rollback();
+		// 	$message = $e->getMessage();
+		// } catch (\Throwable $th) {
+		// 	DB::rollback();
+		// 	$message = $th->getMessage();
+		// }
 
 		return redirect()->back()
 			->with('error', $message);

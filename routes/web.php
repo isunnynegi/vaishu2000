@@ -24,5 +24,7 @@ Auth::routes([
 
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-    Route::resource('category', 'CategoryController');
+    Route::resource('category', App\Http\Controllers\CategoryController::class);
+    Route::resource('product', App\Http\Controllers\ProductController::class);
+    Route::resource('customer', App\Http\Controllers\CustomerController::class);
 });

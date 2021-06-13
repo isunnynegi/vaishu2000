@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Auth;
 use Illuminate\Http\Request;
+use App\Models\{Category, Product, User};
 
 class HomeController extends Controller
 {
@@ -23,6 +25,11 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+
+        $category = Category::where('status', 'ACTIVE')->count();
+        $product = Product::where('status', 'ACTIVE')->count();
+        $customer = User::where('id','<>', Auth::user()->id)->count();
+
+        return view('home', compact('category', 'product', 'customer'));
     }
 }

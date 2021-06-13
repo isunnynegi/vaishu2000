@@ -22,20 +22,44 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
-          <li class="nav-item menu-open">
-            <a href="{{ route('home')}}" class="nav-link active">
+          <li class="nav-item">
+            <a href="{{ route('home')}}" class="nav-link {{ (Route::current()->getName() == 'home' ||Route::current()->getName() == '') ? 'active' : '' }}">
               <i class="nav-icon fas fa-tachometer-alt"></i>
               <p> Dashboard </p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="pages/widgets.html" class="nav-link">
-              <i class="nav-icon fas fa-th"></i>
+            <a href="{{route('category.index')}}" class="nav-link {{ (Route::current()->getName() == 'category.index') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-list-alt"></i>
               <p>
-                Widgets
-                <span class="right badge badge-danger">New</span>
+                Category
               </p>
             </a>
+          </li>
+          <li class="nav-item">
+            <a href="{{ route('product.index') }}" class="nav-link {{ (Route::current()->getName() == 'product.index') ? 'active' : '' }}">
+              <i class="fas fa-sitemap"></i>
+              <p>
+                Product
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="{{ route('customer.index') }}" class="nav-link {{ (Route::current()->getName() == 'customer.index') ? 'active' : '' }}">
+              <i class="fas fa-users"></i>
+              <p>
+                Customer
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="{{ route('logout') }}" class="nav-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+              <i class="fas fa-sign-out-alt"></i>
+              <p>
+                Log Out
+              </p>
+            </a>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none"> @csrf </form>
           </li>
         </ul>
       </nav>
