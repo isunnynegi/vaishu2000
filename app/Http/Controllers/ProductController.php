@@ -12,7 +12,7 @@ class ProductController extends Controller{
     
     public function index(Request $request) {
 
-		$product = Product::select(['id', 'name', 'type', 'status'])->get();
+		$product = Product::select(['id', 'name', 'description', 'status'])->get();
 
 		return view('product.index', compact('product'));
     }
@@ -20,7 +20,9 @@ class ProductController extends Controller{
     public function create() {
 		$product = new Product;
 
-		return view('product.create', compact('product'));
+        $category = Category::select('id', 'name')->where('status', 'ACTIVE')->pluck('name', 'id')->all();
+
+		return view('product.create', compact('product', 'category'));
 	}
 
 	public function store(Request $request) {				
@@ -30,10 +32,11 @@ class ProductController extends Controller{
 			'name' => ['required', Rule::unique('product')->where(function ($query) {
 				return $query->where('status', 'ACTIVE');
 			})],
-			'type' => ['sometimes']
+			'description' => ['required']
 		], [
 			'name.required' => 'Product Name is required',
-			'name.unique' => 'Product Name is already exists'
+			'name.unique' => 'Product Name is already exists',
+			'description.required' => 'Product Name is required',
 		]);
 
 		DB::beginTransaction();
@@ -67,7 +70,9 @@ class ProductController extends Controller{
 
 		try {
 			$product = Product::findOrFail($id);
-			return view('product.edit', compact('product'));
+            $category = Category::select('id', 'name')->where('status', 'ACTIVE')->pluck('name', 'id')->all();
+
+			return view('product.edit', compact('product', 'category'));
 
 		} catch (Illuminate\Database\QueryException $e) {
 			$message = $e->getMessage();
@@ -85,10 +90,11 @@ class ProductController extends Controller{
 			'name' => ['required', Rule::unique('product')->where(function ($query) use ($id) {
 				return $query->where('status', 'ACTIVE')->where("id", "<>", $id);
 			})],
-			'status' => ['required']
+			'description' => ['required']
 		], [
 			'name.required' => 'Product is required',
-			'name.unique' => 'Product is already exists'
+			'name.unique' => 'Product is already exists',
+            'description.required' => 'Product description is required'
 		]);
 
 		DB::beginTransaction();
