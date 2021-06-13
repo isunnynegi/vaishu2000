@@ -37,7 +37,7 @@ class CategoryController extends Controller{
 		]);
 
 		DB::beginTransaction();
-		// try {
+		try {
 			$postArr['created_by'] = Auth::user()->id;
 			
 			$itemsku = Category::create($postArr);
@@ -48,16 +48,16 @@ class CategoryController extends Controller{
 			} else {
 				$message = 'Category can\'t added';
 			}
-		// } catch (Illuminate\Database\QueryException $e) {
-		// 	DB::rollback();
-		// 	$message = $e->getMessage();
-		// } catch (\Exception $e) {
-		// 	DB::rollback();
-		// 	$message = $e->getMessage();
-		// } catch (\Throwable $th) {
-		// 	DB::rollback();
-		// 	$message = $th->getMessage();
-		// }
+		} catch (Illuminate\Database\QueryException $e) {
+			DB::rollback();
+			$message = $e->getMessage();
+		} catch (\Exception $e) {
+			DB::rollback();
+			$message = $e->getMessage();
+		} catch (\Throwable $th) {
+			DB::rollback();
+			$message = $th->getMessage();
+		}
 
 		return redirect()->back()
 			->with('error', $message);
